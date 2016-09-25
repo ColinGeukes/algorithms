@@ -1,8 +1,6 @@
 /** Class created at created at 24 sep. 2016 */
 package algorithms;
 
-import java.util.Scanner;
-
 /** @author Colin Geukes */
 
 /* TODO: 
