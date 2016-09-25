@@ -2,6 +2,7 @@
 package algorithms;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,12 +29,18 @@ public class DataEncryption {
 		System.out.println("\n" + RunLengthEncoding.decodeRLE8(message, RunLengthEncoding.Encode.Binary));
 		
 		try {
-		    Files.write(Paths.get("myfile.txt"), RunLengthEncoding.decodeRLE8(message, RunLengthEncoding.Encode.Binary).getBytes(), StandardOpenOption.APPEND);
-		}catch (IOException e) {
-		    //exception handling left as an exercise for the reader
-		}
+			//Clean the test.txt
+			FileOutputStream writer = new FileOutputStream("test.txt");
+			writer.write(("").getBytes());
+			writer.close();
+
+		    Files.write(Paths.get("test.txt"), BinaryToText(message).getBytes(), StandardOpenOption.APPEND);
+		    
+			message = encrypt(TextToBinary(Files.readAllLines(Paths.get("test.txt")).get(0)), key);
+			System.out.println(message);
+		}catch (IOException e) {}
 		
-		message = encrypt(message, key);
+
 		System.out.println("\n" + RunLengthEncoding.decodeRLE8(message, RunLengthEncoding.Encode.Binary));
 	}
 	
@@ -48,7 +55,7 @@ public class DataEncryption {
 		input = input.replaceAll("\\s+",""); 
 		
 		//Transform the key to binary
-		key = StringToBinary(key);
+		key = TextToBinary(key);
 		String output = "";
 		
 		for(int i = 0; i < input.length(); i++){
@@ -71,10 +78,19 @@ public class DataEncryption {
 	 * @param input - normal string.
 	 * @return a binary string.
 	 */
-	public static String StringToBinary(String input){
+	public static String TextToBinary(String input){
 		String output = "";
 		for(int i = 0; i < input.length(); i++){
 			output += Integer.toBinaryString(0x100 | input.charAt(i)).substring(1);
+		}
+		return output;
+	}
+	
+	public static String BinaryToText(String input){
+		String output = "";
+		for(int i = 0; i < input.length()/8; i++){
+			int character = Integer.parseInt(input.substring(i *8, (i + 1) * 8), 2);
+			output += (char)character;
 		}
 		return output;
 	}
