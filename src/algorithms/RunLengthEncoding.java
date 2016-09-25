@@ -1,15 +1,23 @@
 /** Class created at created at 24 sep. 2016 */
 package algorithms;
 
-import java.util.Scanner;
-
 /** @author Colin Geukes */
 
 /* TODO: 
  * - Add decoding for Encode.String
 */
 
-public class RunLenghtEncoding {
+public class RunLengthEncoding {
+	
+	/**
+	 * Encodes a given string using Run-Length Encoding 8-bit.
+	 * @param message - The string you want to encode to RLE8
+	 * @param encoding - The type of encoding you want to use
+	 * @return a string that is encoded into RLE8
+	 */
+	public static String encodeRLE8(String message, Encode encoding){
+		return encodeRLE8(message, encoding, false, false);
+	}
 	
 	/**
 	 * Encodes a given string using Run-Length Encoding 8-bit.
