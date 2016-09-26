@@ -1,47 +1,35 @@
 /** DataEncryption.java in algorithms created 25 sep. 2016 */
 package algorithms;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /** @author Colin Geukes */
 public class DataEncryption {
 	
+	private static byte shift = 5; //The normal shift key to make the code less repeatable. 
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws FileNotFoundException, NullPointerException{
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Date Encryption:\n\tMessage: ");
 		String message = RunLengthEncoding.encodeRLE8(scanner.nextLine(), RunLengthEncoding.Encode.Binary);
 		System.out.print( "\tKey: ");
 		String key = scanner.nextLine();
 		scanner.close();
-		System.out.print("\n" + message);
-		System.out.print("\n" + key);
-
+		
+		
+		System.out.print("\nBitMessage:\t\t" + message);
+		System.out.print("\nKeyMessage:\t\t" + TextToBinary(key));
+		
 		message = encrypt(message, key);
-		System.out.println("\n" + message);
+		System.out.println("\nEncryptedMessage:\t" + message);
 		
-		System.out.println("\n" + RunLengthEncoding.decodeRLE8(message, RunLengthEncoding.Encode.Binary));
+		//System.out.println("\n" + BinaryToText(message));
 		
-		try {
-			//Clean the test.txt
-			FileOutputStream writer = new FileOutputStream("test.txt");
-			writer.write(("").getBytes());
-			writer.close();
+		FileHandler.createFile("data/encrypted.binary");
+		FileHandler.writeFile("data/encrypted.binary", message);
 
-		    Files.write(Paths.get("test.txt"), BinaryToText(message).getBytes(), StandardOpenOption.APPEND);
-		    
-			message = encrypt(TextToBinary(Files.readAllLines(Paths.get("test.txt")).get(0)), key);
-			System.out.println(message);
-		}catch (IOException e) {}
-		
-
-		System.out.println("\n" + RunLengthEncoding.decodeRLE8(message, RunLengthEncoding.Encode.Binary));
+		System.out.println("\n" + RunLengthEncoding.decodeRLE8(encrypt(FileHandler.getStrings("data/encrypted.binary"), key), RunLengthEncoding.Encode.Binary));
 	}
 	
 	/**
@@ -51,6 +39,17 @@ public class DataEncryption {
 	 * @return an encrypted string or string which has its encryption removed.
 	 */
 	public static String encrypt(String input, String key){
+		return encrypt(input, key, shift);
+	}
+	
+	/**
+	 * Method to encrypt a string or remove an encryption from a string.
+	 * @param input - string you want to be encrypted
+	 * @param key - a key used to encrypt the input string.
+	 * @param shift - how much numbers are removed from the key, in order to make the encrypted string less repeatable.
+	 * @return an encrypted string or string which has its encryption removed.
+	 */	
+	public static String encrypt(String input, String key, byte shift){
 		//Remove all the whitespace from the input string
 		input = input.replaceAll("\\s+",""); 
 		
@@ -61,7 +60,7 @@ public class DataEncryption {
 		for(int i = 0; i < input.length(); i++){
 			//Get the character at i of the input and key.
 			byte i_input = (byte)input.charAt(i);
-			byte i_key = (byte)key.charAt(i % key.length());
+			byte i_key = (byte)key.charAt(i % (key.length() - shift));
 			
 			//Do a XOR operation.
 			if(i_input != i_key){
