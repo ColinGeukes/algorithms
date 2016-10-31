@@ -17,19 +17,16 @@ public class DataEncryption {
 		String key = scanner.nextLine();
 		scanner.close();
 		
-		
 		System.out.print("\nBitMessage:\t\t" + message);
 		System.out.print("\nKeyMessage:\t\t" + TextToBinary(key));
 		
 		message = encrypt(message, key);
 		System.out.println("\nEncryptedMessage:\t" + message);
-		
-		//System.out.println("\n" + BinaryToText(message));
-		
-		FileHandler.createFile("data/encrypted.binary");
-		FileHandler.writeFile("data/encrypted.binary", message);
 
-		System.out.println("\n" + RunLengthEncoding.decodeRLE8(encrypt(FileHandler.getStrings("data/encrypted.binary"), key), RunLengthEncoding.Encode.Binary));
+		FileHandler.createFile("data/encrypted");
+		FileHandler.writeFile("data/encrypted", message);
+
+		System.out.println("\n" + RunLengthEncoding.decodeRLE8(encrypt(FileHandler.getStrings("data/encrypted"), key), RunLengthEncoding.Encode.Binary));
 	}
 	
 	/**
